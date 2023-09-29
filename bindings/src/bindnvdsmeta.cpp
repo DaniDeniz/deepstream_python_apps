@@ -283,6 +283,71 @@ namespace pydeepstream {
                               },
                               [](NvDsBatchMeta &self) {});
 
+        py::class_<NvDsAudioFrameMeta>(m, "NvDsAudioFrameMeta",
+                                  pydsdoc::nvmeta::FrameMetaDoc::descr)
+                .def(py::init<>())
+                .def_readwrite("base_meta", &NvDsAudioFrameMeta::base_meta)
+                .def_readwrite("pad_index", &NvDsAudioFrameMeta::pad_index)
+                .def_readwrite("batch_id", &NvDsAudioFrameMeta::batch_id)
+                .def_readwrite("frame_num", &NvDsAudioFrameMeta::frame_num)
+                .def_readwrite("buf_pts", &NvDsAudioFrameMeta::buf_pts)
+                .def_readwrite("ntp_timestamp", &NvDsAudioFrameMeta::ntp_timestamp)
+                .def_readwrite("source_id", &NvDsAudioFrameMeta::source_id)
+                .def_readwrite("num_samples_per_frame",
+                               &NvDsAudioFrameMeta::num_samples_per_frame)
+                .def_readwrite("sample_rate", &NvDsAudioFrameMeta::sample_rate)
+                .def_readwrite("num_channels", &NvDsAudioFrameMeta::num_channels)
+                .def_readwrite("format", &NvDsAudioFrameMeta::format)
+                .def_readwrite("layout", &NvDsAudioFrameMeta::layout)
+                .def_readwrite("bInferDone", &NvDsAudioFrameMeta::bInferDone)
+                .def_readwrite("class_id", &NvDsAudioFrameMeta::class_id)
+                .def_readwrite("confidence", &NvDsAudioFrameMeta::confidence)
+                .def_readwrite("classifier_meta_list", &NvDsAudioFrameMeta::classifier_meta_list)
+                .def_readwrite("frame_user_meta_list", &NvDsAudioFrameMeta::frame_user_meta_list)
+
+                .def("cast",
+                     [](void *data) {
+                         return (NvDsAudioFrameMeta *) data;
+                     },
+                     py::return_value_policy::reference,
+                     pydsdoc::nvmeta::FrameMetaDoc::cast)
+
+                .def("cast",
+                     [](size_t data) {
+                         return (NvDsAudioFrameMeta *) data;
+                     },
+                     py::return_value_policy::reference,
+                     pydsdoc::nvmeta::FrameMetaDoc::cast)
+
+
+                .def_property("class_label",
+                              STRING_CHAR_ARRAY(NvDsAudioFrameMeta, class_label))
+
+                .def_property("misc_frame_info",
+                              [](NvDsAudioFrameMeta &self) -> py::array {
+                                  auto dtype = py::dtype(
+                                          py::format_descriptor<int>::format());
+                                  auto base = py::array(dtype,
+                                                        {MAX_USER_FIELDS},
+                                                        {sizeof(int)});
+                                  return py::array(dtype, {MAX_USER_FIELDS},
+                                                   {sizeof(int)},
+                                                   self.misc_frame_info, base);
+                              },
+                              [](NvDsAudioFrameMeta &self) {})
+
+                .def_property("reserved",
+                              [](NvDsAudioFrameMeta &self) -> py::array {
+                                  auto dtype = py::dtype(
+                                          py::format_descriptor<int>::format());
+                                  auto base = py::array(dtype,
+                                                        {MAX_RESERVED_FIELDS},
+                                                        {sizeof(int)});
+                                  return py::array(dtype, {MAX_RESERVED_FIELDS},
+                                                   {sizeof(int)}, self.reserved,
+                                                   base);
+                              },
+                              [](NvDsBatchMeta &self) {});    
 
         py::class_<NvDsObjectMeta>(m, "NvDsObjectMeta",
                                    pydsdoc::nvmeta::ObjectMetaDoc::descr)
